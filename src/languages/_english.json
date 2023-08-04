@@ -1621,7 +1621,7 @@
     },
     "transactions": {
       "actions": {
-        "addToContacts": "Add to Contacts :)",
+        "addToContacts": "Add to Contacts",
         "cancel": "☠️ Cancel",
         "close": "Close",
         "speedUp": "🚀 Speed Up",
