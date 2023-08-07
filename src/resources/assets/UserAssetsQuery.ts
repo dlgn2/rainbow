@@ -10,7 +10,9 @@ import {
   QueryFunctionArgs,
   QueryFunctionResult,
 } from '@/react-query';
+import { DATA_LOAD_ACCOUNT_ASSETS_DATA_RECEIVED } from '@/redux/data';
 import { useQuery } from '@tanstack/react-query';
+import store from '@/redux/store';
 import { parseAddressAsset } from './assets';
 import { AddysAccountAssetsResponse, RainbowAddressAssets } from './types';
 
@@ -68,6 +70,14 @@ async function userAssetsQueryFunction({
     });
     const data = response.data;
     const parsedResults = parseUserAssetsByChain(data);
+
+    // Temporary: update data redux with address assets
+    const { dispatch } = store;
+    dispatch({
+      payload: parsedResults,
+      type: DATA_LOAD_ACCOUNT_ASSETS_DATA_RECEIVED,
+    });
+
     return parsedResults;
   } catch (e) {
     return cachedAddressAssets;
