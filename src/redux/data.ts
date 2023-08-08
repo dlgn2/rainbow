@@ -2,7 +2,7 @@ import {
   StaticJsonRpcProvider,
   TransactionResponse,
 } from '@ethersproject/providers';
-import { find, isEmpty, isNil, mapValues, partition, cloneDeep } from 'lodash';
+import { isEmpty, isNil, mapValues, partition, cloneDeep } from 'lodash';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import {
@@ -86,8 +86,6 @@ const DATA_LOAD_TRANSACTIONS_FAILURE = 'data/DATA_LOAD_TRANSACTIONS_FAILURE';
 export const DATA_UPDATE_PENDING_TRANSACTIONS_SUCCESS =
   'data/DATA_UPDATE_PENDING_TRANSACTIONS_SUCCESS';
 
-const DATA_UPDATE_REFETCH_SAVINGS = 'data/DATA_UPDATE_REFETCH_SAVINGS';
-
 const DATA_CLEAR_STATE = 'data/DATA_CLEAR_STATE';
 
 // -- Actions ---------------------------------------- //
@@ -138,11 +136,6 @@ export interface DataState {
   };
 
   /**
-   * Whether or not savings should be reset.
-   */
-  shouldRefetchSavings: boolean;
-
-  /**
    * Transactions for this account.
    */
   transactions: RainbowTransaction[];
@@ -152,7 +145,6 @@ export interface DataState {
  * An action for the `data` reducer.
  */
 type DataAction =
-  | DataUpdateRefetchSavingsAction
   | DataUpdateGenericAssetsAction
   | DataUpdatePortfoliosAction
   | DataUpdateEthUsdAction
@@ -166,14 +158,6 @@ type DataAction =
   | DataLoadAccountAssetsDataFinalizedAction
   | DataUpdatePendingTransactionSuccessAction
   | DataClearStateAction;
-
-/**
- * The action to change `shouldRefetchSavings`.
- */
-interface DataUpdateRefetchSavingsAction {
-  type: typeof DATA_UPDATE_REFETCH_SAVINGS;
-  payload: boolean;
-}
 
 /**
  * The action to update `genericAssets`.
@@ -499,7 +483,7 @@ export const dataUpdateAsset = (assetData: ParsedAddressAsset) => (
  * @param message The message received from Zerion.
  */
 const checkMeta = (message: DataMessage | undefined) => (
-  dispatch: Dispatch<never>,
+  _: Dispatch<never>,
   getState: AppGetState
 ) => {
   const { accountAddress, nativeCurrency } = getState().settings;
@@ -509,26 +493,6 @@ const checkMeta = (message: DataMessage | undefined) => (
     isLowerCaseMatch(address!, accountAddress) &&
     isLowerCaseMatch(currency!, nativeCurrency)
   );
-};
-
-/**
- * Checks to see if new savings are available based on incoming transaction data,
- * and if so, updates state to request refetching savings.
- *
- * @param transactionsData Incoming transaction data.
- */
-const checkForConfirmedSavingsActions = (
-  transactionsData: ZerionTransaction[]
-) => (dispatch: ThunkDispatch<AppState, unknown, never>) => {
-  const foundConfirmedSavings = find(
-    transactionsData,
-    (transaction: ZerionTransaction) =>
-      (transaction?.type === 'deposit' || transaction?.type === 'withdraw') &&
-      transaction?.status === 'confirmed'
-  );
-  if (foundConfirmedSavings) {
-    dispatch(updateRefetchSavings(true));
-  }
 };
 
 /**
@@ -624,12 +588,6 @@ export const transactionsReceived = (
   }
 
   const transactionData = message?.payload?.transactions ?? [];
-  if (appended) {
-    loggr.debug(
-      'transactionsReceived: dispatching checkForConfirmedSavingsActions'
-    );
-    dispatch(checkForConfirmedSavingsActions(transactionData));
-  }
 
   const { network } = getState().settings;
   let currentNetwork = network;
@@ -1373,19 +1331,6 @@ export const watchPendingTransactions = (
   }
 };
 
-/**
- * Updates state to indicate whether or not savings data should be refetched.
- *
- * @param fetch Whether or not savings should be refetched.
- */
-export const updateRefetchSavings = (fetch: boolean) => (
-  dispatch: Dispatch<DataUpdateRefetchSavingsAction>
-) =>
-  dispatch({
-    payload: fetch,
-    type: DATA_UPDATE_REFETCH_SAVINGS,
-  });
-
 // -- Reducer ----------------------------------------- //
 const INITIAL_STATE: DataState = {
   accountAssetsData: {}, // for account-specific assets
@@ -1395,14 +1340,11 @@ const INITIAL_STATE: DataState = {
   isLoadingTransactions: true,
   pendingTransactions: [],
   portfolios: {},
-  shouldRefetchSavings: false,
   transactions: [],
 };
 
 export default (state: DataState = INITIAL_STATE, action: DataAction) => {
   switch (action.type) {
-    case DATA_UPDATE_REFETCH_SAVINGS:
-      return { ...state, shouldRefetchSavings: action.payload };
     case DATA_UPDATE_GENERIC_ASSETS:
       return { ...state, genericAssets: action.payload };
     case DATA_UPDATE_PORTFOLIOS:
