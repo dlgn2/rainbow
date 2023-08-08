@@ -18,6 +18,7 @@ import { positionsQueryKey } from '@/resources/defi/PositionsQuery';
 import { RainbowPositions } from '@/resources/defi/types';
 import { hideTokensWithUrls, parseAddressAsset } from './assets';
 import { AddysAccountAssetsResponse, RainbowAddressAssets } from './types';
+import { fetchTestnetOrHardhatBalances } from './testnetAndHardhat';
 
 // ///////////////////////////////////////////////
 // Query Types
@@ -54,6 +55,23 @@ async function userAssetsQueryFunction({
   const cachedAddressAssets = (cache.find(
     userAssetsQueryKey({ address, currency, connectedToHardhat })
   )?.state?.data || {}) as RainbowAddressAssets;
+
+  const { dispatch } = store;
+
+  // TODO JIN : need to distinguish between testnet and hardhat
+  if (connectedToHardhat) {
+    const parsedTestnetOrHardhatResults = fetchTestnetOrHardhatBalances(
+      address,
+      network,
+      currency
+    );
+    // Temporary: update data redux with address assets
+    dispatch({
+      payload: parsedTestnetOrHardhatResults,
+      type: DATA_LOAD_ACCOUNT_ASSETS_DATA_RECEIVED,
+    });
+    return parsedTestnetOrHardhatResults;
+  }
 
   try {
     const chainIds = RainbowNetworks.filter(
@@ -96,7 +114,6 @@ async function userAssetsQueryFunction({
     hideTokensWithUrls(parsedSuccessResults, address);
 
     // Temporary: update data redux with address assets
-    const { dispatch } = store;
     dispatch({
       payload: parsedSuccessResults,
       type: DATA_LOAD_ACCOUNT_ASSETS_DATA_RECEIVED,
