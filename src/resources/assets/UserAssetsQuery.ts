@@ -264,13 +264,17 @@ export async function fetchUserAssets(
 // ///////////////////////////////////////////////
 // Query Hook
 
-export function useUserAssets(
-  { address, currency, connectedToHardhat }: UserAssetsArgs,
-  config: QueryConfig<UserAssetsResult, Error, UserAssetsQueryKey> = {}
-) {
+export function useUserAssets({
+  address,
+  currency,
+  connectedToHardhat,
+}: UserAssetsArgs) {
   return useQuery(
     userAssetsQueryKey({ address, currency, connectedToHardhat }),
     userAssetsQueryFunction,
-    config
+    {
+      staleTime: 60_000, // 1 minute
+      refetchInterval: 300_000, // 5 minutes
+    }
   );
 }
