@@ -4,11 +4,15 @@
 It needs to be an import statement because otherwise it doesn't load properly
 likely because of typescript.
 */
+import 'reflect-metadata';
+import SQLite from 'react-native-sqlite-2';
 import '@walletconnect/react-native-compat';
 import { analytics } from './src/analytics';
 import { StartTime } from './src/performance/start-time';
 import { PerformanceTracking } from './src/performance/tracking';
 import { PerformanceMetrics } from './src/performance/tracking/types/PerformanceMetrics';
+
+
 
 analytics.track('Started executing JavaScript bundle');
 PerformanceTracking.logDirectly(
@@ -23,8 +27,8 @@ We need to use require calls in order to stop babel from moving imports
 to the top of the file above all other calls. We want Performance tracking
 to start before all of the imports.
  */
+require('node-libs-react-native/globals.js');
 require('react-native-gesture-handler');
 require('./shim');
 require('./src/model/config');
-
 require('./src/App');

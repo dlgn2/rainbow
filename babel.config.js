@@ -14,7 +14,18 @@ function getAliasesFromTsConfig() {
     alias[key.replace(/\/\*$/, '')] = `./${paths[key][0].replace(/\/\*$/, '')}`;
   });
 
-  return alias;
+  const newAlias = {
+    crypto: 'react-native-quick-crypto',
+    stream: 'stream-browserify',
+    https: 'https-browserify',
+    http: '@tradle/react-native-http',
+    fs: 'react-native-fs',
+    path: 'path-browserify',
+    argon2: 'react-native-argon2',
+    zlib: 'browserify-zlib',
+  };
+
+  return { ...alias, newAlias };
 }
 
 module.exports = function (api) {
@@ -30,6 +41,7 @@ module.exports = function (api) {
         root: ['./src'],
       },
     ],
+    '@babel/plugin-syntax-import-assertions',
     'babel-plugin-styled-components',
     '@babel/plugin-proposal-numeric-separator',
     'date-fns',

@@ -59,7 +59,7 @@ export enum ENS_RECORDS {
   LTC = 'LTC',
   DOGE = 'DOGE',
   name = 'name',
-  displayName = 'me.rainbow.displayName',
+  displayName = 'me.rainbowsd.displayName',
   header = 'header',
   content = 'content',
   contenthash = 'contenthash',

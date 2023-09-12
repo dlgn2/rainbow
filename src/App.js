@@ -80,7 +80,21 @@ import { migrate } from '@/migrations';
 import { initListeners as initWalletConnectListeners } from '@/walletConnect';
 import { saveFCMToken } from '@/notifications/tokens';
 import branch from 'react-native-branch';
+import EventContextProvider from './EventContextProvider';
+import CenteredModal from './CenteredModal';
+import LayoutContextProvider from './LayaoutContext';
+import 'react-native-get-random-values'; // Required for IndexedDBShim
+import SQLite from 'react-native-sqlite-2';
+import setGlobalVars from 'indexeddbshim/src/setGlobalVars';
 
+setGlobalVars(global, {
+  checkOrigin: false,
+  win: SQLite,
+  deleteDatabaseFiles: false,
+  useSQLiteIndexes: true,
+});
+console.log('setGlobalVars', setGlobalVars);
+console.log('global', global.indexedDB);
 if (__DEV__) {
   reactNativeDisableYellowBox && LogBox.ignoreAllLogs();
   (showNetworkRequests || showNetworkResponses) &&
@@ -248,19 +262,23 @@ class OldApp extends Component {
   render() {
     return (
       <Portal>
-        <View style={containerStyle}>
-          {this.state.initialRoute && (
-            <InitialRouteContext.Provider value={this.state.initialRoute}>
-              <RoutesComponent
-                onReady={this.handleSentryNavigationIntegration}
-                ref={this.handleNavigatorRef}
-              />
-              <PortalConsumer />
-            </InitialRouteContext.Provider>
-          )}
-          <OfflineToast />
-        </View>
-        <NotificationsHandler walletReady={this.props.walletReady} />
+        <LayoutContextProvider>
+          <EventContextProvider>
+            <View style={containerStyle}>
+              {this.state.initialRoute && (
+                <InitialRouteContext.Provider value={this.state.initialRoute}>
+                  <RoutesComponent
+                    onReady={this.handleSentryNavigationIntegration}
+                    ref={this.handleNavigatorRef}
+                  />
+                  <PortalConsumer />
+                </InitialRouteContext.Provider>
+              )}
+              <OfflineToast />
+            </View>
+            <NotificationsHandler walletReady={this.props.walletReady} />
+          </EventContextProvider>
+        </LayoutContextProvider>
       </Portal>
     );
   }

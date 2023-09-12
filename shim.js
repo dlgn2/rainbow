@@ -176,6 +176,7 @@ if (!ReactNative.InteractionManager._shimmed) {
 // crypto is loaded first, so it can populate global.crypto
 // eslint-disable-next-line import/no-commonjs
 require('crypto');
+require('argon2');
 
 const description = Object.getOwnPropertyDescriptor(
   ReactNative,

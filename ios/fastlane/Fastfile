@@ -50,7 +50,7 @@ platform :ios do
     )
 
     update_app_identifier(
-      app_identifier: "me.rainbow",
+      app_identifier: "me.rainbowsd",
       xcodeproj: "Rainbow.xcodeproj",
       plist_path: "Rainbow/Info.plist",
     )
@@ -58,7 +58,7 @@ platform :ios do
     match(
       force: true,
       type: "appstore",
-      app_identifier: ["me.rainbow", "me.rainbow.PriceWidget", "me.rainbow.SelectTokenIntent", "me.rainbow.ImageNotification"],
+      app_identifier: ["me.rainbowsd", "me.rainbowsd.PriceWidget", "me.rainbowsd.SelectTokenIntent", "me.rainbowsd.ImageNotification"],
       git_url: "git@github.com:rainbow-me/rainbow-code-signing.git"
     )
     
@@ -71,7 +71,7 @@ platform :ios do
     )
 
     pilot(
-      app_identifier: "me.rainbow",
+      app_identifier: "me.rainbowsd",
       skip_waiting_for_build_processing: true,
       changelog:  "#{ENV['BITRISE_GIT_BRANCH']} - #{ENV['BITRISE_GIT_MESSAGE']}",
     )

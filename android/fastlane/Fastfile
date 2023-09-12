@@ -23,7 +23,7 @@ platform :android do
 
     versionCode = google_play_track_version_codes(
       json_key: "./rainbow-google-play-key.json",
-      package_name: "me.rainbow", 
+      package_name: "me.rainbowsd", 
       track: track
     )
 

@@ -172,7 +172,7 @@ export async function scrollUpTo(elementId, distance, direction) {
 }
 
 export async function goToURL(inputURL) {
-  await device.openURL({ sourceApp: 'me.rainbow', url: inputURL });
+  await device.openURL({ sourceApp: 'me.rainbowsd', url: inputURL });
 }
 
 export function checkIfVisible(elementId, timeout) {
@@ -215,7 +215,7 @@ export function checkIfElementHasString(elementID, text) {
 }
 
 export async function relaunchApp() {
-  await device.terminateApp('me.rainbow');
+  await device.terminateApp('me.rainbowsd');
   return device.launchApp({ newInstance: true });
 }
 

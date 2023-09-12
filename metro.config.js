@@ -12,6 +12,16 @@ const blacklistRE = blacklist([
   // react-native-reanimated <patch>
   /patches\/reanimated\/.*/,
 ]);
+const extraNodeModules = {
+  stream: require.resolve('stream-browserify'),
+  crypto: require.resolve('react-native-quick-crypto'),
+  zlib: require.resolve('browserify-zlib'),
+  https: require.resolve('https-browserify'),
+  http: require.resolve('@tradle/react-native-http'),
+  fs: require.resolve('react-native-fs'),
+  path: require.resolve('path-browserify'),
+  argon2: require.resolve('react-native-argon2'),
+};
 
 const transformer = {
   getTransformOptions: async () => ({
@@ -30,7 +40,11 @@ if (process.env.CI) {
 const rainbowConfig = {
   resolver: {
     blacklistRE,
+    extraNodeModules: require('node-libs-react-native'),
   },
   transformer,
+  resolver: {
+    extraNodeModules,
+  },
 };
 module.exports = mergeConfig(getDefaultConfig(__dirname), rainbowConfig);

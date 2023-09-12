@@ -178,7 +178,7 @@ export function Ratio({
   return (
     <RatioComponent
       redirectUri={IS_IOS ? 'https://rainbow.me/plaid/oauth' : undefined}
-      androidPackageName={IS_IOS ? undefined : 'me.rainbow'}
+      androidPackageName={IS_IOS ? undefined : 'me.rainbowsd'}
       onPress={() => {
         logger.debug(`Ratio: clicked`, {}, logger.DebugContext.f2c);
         analyticsV2.track(analyticsV2.event.f2cProviderFlowStarted, {

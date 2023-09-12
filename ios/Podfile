@@ -56,7 +56,7 @@ target 'Rainbow' do
   pod 'react-native-palette-full', :path => '../node_modules/react-native-palette-full'
   pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
   pod 'Plaid', '~> 4.4.0'
-
+  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => false
   use_native_modules!
 
   post_install do |installer|
